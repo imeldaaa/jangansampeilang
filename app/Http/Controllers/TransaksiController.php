@@ -69,7 +69,7 @@ class TransaksiController extends Controller
         }
 
         $bukus = Buku::where('jumlah_buku', '>', 0)->get();
-        $anggotas = Anggota::get();
+        $anggotas = Anggota::where('batas', '>', 0)->get();
         return view('transaksi.create', compact('bukus', 'kode', 'anggotas'));
     }
 
@@ -104,6 +104,8 @@ class TransaksiController extends Controller
                         ->update([
                             'jumlah_buku' => ($transaksi->buku->jumlah_buku - 1),
                             ]);
+        
+        $transaksi->anggota->where('id', $transaksi->anggota_id)->update(['batas' => ($transaksi->anggota->batas -1),]);
 
         alert()->success('Berhasil.','Data telah ditambahkan!');
         return redirect()->route('transaksi.index');
